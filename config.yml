@@ -90,3 +90,48 @@ users:
             - form:
                 title: 你所在区域是否有疑似确诊病例以及中高分险地区，或者受疫情管制健康宝异常等情况：
                 value: 否
+    - user:
+        # 任务类型（收集：0、签到：1、查寝：2、政工签到：3、教师工作日志：4）
+        type: 1
+        # school 学校全称
+        schoolName: 北京印刷学院
+        # username 学号或者工号
+        username: ''
+        # password 密码
+        password: ''
+        # 地址信息
+        address: ''
+        # 表单包含字段
+        intitle: '2022年暑假期间'
+        notifyOption:
+            # method和顶部参数一致，不填默认按照顶部参数执行
+            # method: 0
+            # rcvAcc为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
+            rcvAcc: ''
+        # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
+        # lon 经度,
+        lon: 115.299652
+        # lat 纬度
+        lat: 33.551861
+        # 是否检查表单的标题（1代表检查，0代表不检查）
+        checkTitle: 1
+        # 表单信息
+        forms:
+            - form:
+                title: 你今天早晨的健康状况是：
+                value: 其它
+                extra: 36.5℃
+            - form:
+                title: 你今天中午的健康状况是：
+                value: 其它
+                extra: 36.5℃
+            - form:
+                title: 你今天晚间的健康状况是：
+                value: 其它
+                extra: 36.5℃
+            - form:
+                title: 你与共同生活人员是否存在咳嗽，腹泻，发热，乏力，咽痛等症状以及本人是否处于居家观察等隔离管控状态：
+                value: 否
+            - form:
+                title: 你所在区域是否有疑似确诊病例以及中高分险地区，或者受疫情管制健康宝异常等情况：
+                value: 否
