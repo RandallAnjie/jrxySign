@@ -6,9 +6,11 @@
 ## TODO
  - 本地保存登录信息`session`，免于签到一次登录一次
 
-本项目参考
+## 本项目参考
  - [ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)
  - [CarltonHere/auto-cpdaily](https://github.com/CarltonHere/auto-cpdaily)
+
+再次感谢大佬们提供的代码以及思路
 
 ## 欢迎使用今日校园自动签到系统
 
