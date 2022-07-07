@@ -30,7 +30,7 @@ class Collection:
         if len(res['datas']['rows']) < 1:
             raise Exception('当前暂时没有未完成的信息收集哦！')
         for item in res['datas']['rows']:
-            if self.userInfo['intitle'] in item['subject']: #对南通大学多表单特殊情况作额外的简单适配
+            if self.userInfo['intitle'] in item['subject']:
                 if item['isHandled'] == 0 :
                     self.collectWid = item['wid']
                     self.formWid = item['formWid']

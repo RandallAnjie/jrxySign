@@ -295,22 +295,22 @@ class Utils:
         ]
         return apis[type]
 
-    @staticmethod
-    def saveSession(session, username):
-        # 判断文件是否存在
-        if os.path.exists('./session/' + username + '.session'):
-            os.remove('./session/' + username + '.session')
-        with open('./session/' + username + '.session', 'wb') as f:
-            pickle.dump(session, f)
-
-    @staticmethod
-    def getSession(username):
-        # 判断文件是否存在
-        if os.path.exists('./session/' + username + '.session'):
-            with open('./session/' + username + '.session', 'rb') as f:
-                return pickle.load(f)
-        else:
-            return None
+    # @staticmethod
+    # def saveSession(session, username):
+    #     # 判断文件是否存在
+    #     if os.path.exists('./session/' + username + '.session'):
+    #         os.remove('./session/' + username + '.session')
+    #     with open('./session/' + username + '.session', 'wb') as f:
+    #         pickle.dump(session, f)
+    #
+    # @staticmethod
+    # def getSession(username):
+    #     # 判断文件是否存在
+    #     if os.path.exists('./session/' + username + '.session'):
+    #         with open('./session/' + username + '.session', 'rb') as f:
+    #             return pickle.load(f)
+    #     else:
+    #         return None
 
 
 
@@ -347,3 +347,19 @@ class Utils:
 
     # @staticmethod
     # def saveSession(username):
+    @staticmethod
+    def saveWise(wise, username):
+        # 判断文件是否存在
+        if os.path.exists('./wise/' + username + '.wise'):
+            os.remove('./wise/' + username + '.wise')
+        with open('./wise/' + username + '.wise', 'wb') as f:
+            pickle.dump(wise, f)
+
+    @staticmethod
+    def getWise(username):
+        # 判断文件是否存在
+        if os.path.exists('./wise/' + username + '.wise'):
+            with open('./wise/' + username + '.wise', 'rb') as f:
+                return pickle.load(f)
+        else:
+            return None

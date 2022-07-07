@@ -94,14 +94,5 @@ class wiseLoginService:
         # 获取学校登陆地址
         self.getLoginUrlBySchoolName()
         self.checkLogin()
-        # if load.loadSession():
-        #     self.session = load.session
-        #     self.login_url = load.login_url
-        #     self.login_host = load.login_host
-        #     self.login_type = load.login_type
-        #     self.campus_host = load.campus_host
-        #     self.loginEntity = load.loginEntity
-        # else:
-        #     # 获取学校登陆地址
-        #     self.getLoginUrlBySchoolName()
-        #     self.checkLogin()
+
+

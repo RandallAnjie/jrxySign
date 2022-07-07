@@ -50,45 +50,87 @@ def start():
 
 
 def working(user, httpProxy):
-    Utils.log('正在获取登录地址')
     wise = wiseLoginService(user['user'], httpProxy)
-    Utils.log('开始尝试登录账号')
-    wise.login()
+    # 判断wise文件是否存在
+    if Utils.getWise(user['user']['username']) is None:
+        Utils.log('开始尝试登录账号')
+        wise.login()
+        # 将wise对象保存到本地
+        Utils.saveWise(wise, user['user']['username'])
+    else:
+        wise = Utils.getWise(user['user']['username'])
     sleep(1)
     # 登陆成功，通过type判断当前属于 信息收集、签到、查寝
     # 信息收集
     # print(user)
-    if user['user']['type'] == 0:
-        # 以下代码是信息收集的代码
-        Utils.log('开始执行收集任务')
-        collection = Collection(wise, user['user'])
-        collection.queryForm()
-        collection.fillForm()
-        sleep(1)
-        msg = collection.submitForm()
-        return msg
-    elif user['user']['type'] in [1, 2, 3]:
-        # 以下代码是签到的代码
-        Utils.log('开始执行签到任务')
-        sign = AutoSign(wise, user['user'])
-        sign.getUnSignTask()
-        sleep(1)
-        sign.getDetailTask()
-        sign.fillForm()
-        sleep(1)
-        msg = sign.submitForm()
-        return msg
-    elif user['user']['type'] == 4:
-        # 以下代码是工作日志的代码
-        Utils.log('开始执行日志任务')
-        work = workLog(wise, user['user'])
-        work.checkHasLog()
-        sleep(1)
-        work.getFormsByWids()
-        work.fillForms()
-        sleep(1)
-        msg = work.submitForms()
-        return msg
+    try:
+        if user['user']['type'] == 0:
+            # 以下代码是信息收集的代码
+            Utils.log('开始执行收集任务')
+            collection = Collection(wise, user['user'])
+            collection.queryForm()
+            collection.fillForm()
+            sleep(1)
+            msg = collection.submitForm()
+            return msg
+        elif user['user']['type'] in [1, 2, 3]:
+            # 以下代码是签到的代码
+            Utils.log('开始执行签到任务')
+            sign = AutoSign(wise, user['user'])
+            sign.getUnSignTask()
+            sleep(1)
+            sign.getDetailTask()
+            sign.fillForm()
+            sleep(1)
+            msg = sign.submitForm()
+            return msg
+        elif user['user']['type'] == 4:
+            # 以下代码是工作日志的代码
+            Utils.log('开始执行日志任务')
+            work = workLog(wise, user['user'])
+            work.checkHasLog()
+            sleep(1)
+            work.getFormsByWids()
+            work.fillForms()
+            sleep(1)
+            msg = work.submitForms()
+            return msg
+    except Exception as e:
+        Utils.log('开始尝试登录账号')
+        wise.login()
+        # 将wise对象保存到本地
+        Utils.saveWise(wise, user['user']['username'])
+        if user['user']['type'] == 0:
+            # 以下代码是信息收集的代码
+            Utils.log('开始执行收集任务')
+            collection = Collection(wise, user['user'])
+            collection.queryForm()
+            collection.fillForm()
+            sleep(1)
+            msg = collection.submitForm()
+            return msg
+        elif user['user']['type'] in [1, 2, 3]:
+            # 以下代码是签到的代码
+            Utils.log('开始执行签到任务')
+            sign = AutoSign(wise, user['user'])
+            sign.getUnSignTask()
+            sleep(1)
+            sign.getDetailTask()
+            sign.fillForm()
+            sleep(1)
+            msg = sign.submitForm()
+            return msg
+        elif user['user']['type'] == 4:
+            # 以下代码是工作日志的代码
+            Utils.log('开始执行日志任务')
+            work = workLog(wise, user['user'])
+            work.checkHasLog()
+            sleep(1)
+            work.getFormsByWids()
+            work.fillForms()
+            sleep(1)
+            msg = work.submitForms()
+            return msg
 
 
 # 阿里云的入口函数
