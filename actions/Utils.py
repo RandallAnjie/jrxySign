@@ -293,3 +293,14 @@ class Utils:
             ]
         ]
         return apis[type]
+
+    @staticmethod
+    def saveCookies(cookies, username):
+        # 判断文件./cookies/username.txt是否存在
+        if os.path.exists('./cookies/' + username + '.txt'):
+            os.remove('./cookies/' + username + '.txt')
+        # 写入文件
+        with open('./cookies/' + username + '.txt', 'w') as f:
+            f.write(cookies)
+        print('保存成功')
+
