@@ -11,7 +11,7 @@
  - 完善上一版本更新的稳定性
  - 更新了日志文档
 ### v1.9.0(beta)
- - 新增本地保存登录信息的`session`模块，免于签到一次登录一次（未测试）
+ - 新增本地保存登录信息session的`wise`模块，免于签到一次登录一次（未测试）
 
 ## 本项目参考
  - [ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)
