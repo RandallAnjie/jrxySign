@@ -3,6 +3,9 @@
 
 **北京印刷学院服务器目前每天晚上例行维护，签到时间请自行设定到早上七点半以后**
 
+## TODO
+ - 本地保存登录信息`session`，免于签到一次登录一次
+
 本项目参考
  - [ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)
  - [CarltonHere/auto-cpdaily](https://github.com/CarltonHere/auto-cpdaily)
