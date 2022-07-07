@@ -1,6 +1,8 @@
 
 **此项目本意是为北京印刷学院学子提供方便**
 
+**北京印刷学院服务器目前每天晚上例行维护，签到时间请自行设定到早上七点半以后**
+
 本项目参考
  - [ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)
  - [CarltonHere/auto-cpdaily](https://github.com/CarltonHere/auto-cpdaily)
