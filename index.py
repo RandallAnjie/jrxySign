@@ -28,8 +28,8 @@ def start():
                 msg = str(e)
                 ret = False
             ntm = Utils.getTimeStr()
-            if ret == True:
-                #此处需要注意就算提示成功也不一定是真的成功，以实际为准
+            if ret:
+                # 此处需要注意就算提示成功也不一定是真的成功，以实际为准
                 Utils.log(msg)
                 if 'SUCCESS' in msg:
                     msg = push.sendMsg(
@@ -39,12 +39,12 @@ def start():
                 else:
                     msg = push.sendMsg(
                         '今日校园签到异常通知', '服务器(V%s)于%s尝试签到异常!\n异常信息:%s' %
-                        (config['Version'], ntm, msg), user['user'])
+                                      (config['Version'], ntm, msg), user['user'])
             else:
                 Utils.log("Error:" + msg)
                 msg = push.sendMsg(
                     '今日校园签到失败通知', '服务器(V%s)于%s尝试签到失败!\n错误信息:%s' %
-                    (config['Version'], ntm, msg), user['user'])
+                                  (config['Version'], ntm, msg), user['user'])
             Utils.log(msg)
     Utils.log("自动化任务执行完毕")
 
@@ -67,7 +67,7 @@ def working(user, httpProxy):
         sleep(1)
         msg = collection.submitForm()
         return msg
-    elif user['user']['type'] in [1,2,3]:
+    elif user['user']['type'] in [1, 2, 3]:
         # 以下代码是签到的代码
         Utils.log('开始执行签到任务')
         sign = AutoSign(wise, user['user'])

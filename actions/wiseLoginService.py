@@ -16,6 +16,8 @@ class wiseLoginService:
                     'password'] or None == userInfo[
                         'schoolName'] or '' == userInfo['schoolName']:
             raise Exception('初始化类失败，请键入完整的参数（用户名，密码，学校名称）')
+        self.userInfo = userInfo
+        self.httpProxy = httpProxy
         self.username = userInfo['username']
         self.password = userInfo['password']
         self.schoolName = userInfo['schoolName']
@@ -70,7 +72,7 @@ class wiseLoginService:
                 self.login_host = re.findall('\w{4,5}\:\/\/.*?\/', res.url)[0]
                 self.login_type = joinType
                 break
-        if flag == False:
+        if not flag:
             raise Exception(self.schoolName + '不存在或未加入今日校园')
 
     # 通过登陆url判断采用哪种登陆方式
@@ -88,6 +90,18 @@ class wiseLoginService:
 
     # 本地化登陆
     def login(self):
+        # load = loadLogin(self.userInfo, self.httpProxy)
         # 获取学校登陆地址
         self.getLoginUrlBySchoolName()
         self.checkLogin()
+        # if load.loadSession():
+        #     self.session = load.session
+        #     self.login_url = load.login_url
+        #     self.login_host = load.login_host
+        #     self.login_type = load.login_type
+        #     self.campus_host = load.campus_host
+        #     self.loginEntity = load.loginEntity
+        # else:
+        #     # 获取学校登陆地址
+        #     self.getLoginUrlBySchoolName()
+        #     self.checkLogin()

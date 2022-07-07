@@ -3,8 +3,15 @@
 
 **北京印刷学院服务器目前每天晚上例行维护，签到时间请自行设定到早上七点半以后**
 
-## TODO
- - 本地保存登录信息`session`，免于签到一次登录一次
+## 更新日志
+### v1.8.8(beta)
+ - 适配了北印信工的签到系统
+ - 调整新增了签到选项为其他需要填写信息的情况
+### v1.8.9
+ - 完善上一版本更新的稳定性
+ - 更新了日志文档
+### v1.9.0(beta)
+ - 新增本地保存登录信息的`session`模块，免于签到一次登录一次（未测试）
 
 ## 本项目参考
  - [ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)
@@ -62,6 +69,9 @@ config.yam中必填内容：
  - 使用过程中报错`No module named 'XXXXX'`请重新安装依赖
  - 请注意`config.yml`中每行参数的缩进位置，不然会产生错误
 
+### TODO
+ - 完善qq机器人推送模块
+ - 完善session稳定和登录状态检测（新增判断session可用性）
 
 ### 📜许可证
 
