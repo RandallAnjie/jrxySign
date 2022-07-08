@@ -1,3 +1,5 @@
+import os
+
 from tencentcloud.common.profile.http_profile import HttpProfile
 from actions.wiseLoginService import wiseLoginService
 from actions.autoSign import AutoSign
@@ -52,7 +54,7 @@ def start():
 def working(user, httpProxy):
     wise = wiseLoginService(user['user'], httpProxy)
     # 判断wise文件是否存在
-    if Utils.getWise(user['user']['username']) is None:
+    if not os.path.exists('./wise/' + user['user']['username'] + '.wise'):
         Utils.log('开始尝试登录账号')
         wise.login()
         # 将wise对象保存到本地
@@ -97,7 +99,8 @@ def working(user, httpProxy):
             return msg
     except Exception as e:
         if "没有未签到的任务" in str(e):
-            return e
+            Utils.log(str(e))
+            return str(e)
         else:
             Utils.log('开始尝试登录账号')
             wise.login()

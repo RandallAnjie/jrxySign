@@ -20,7 +20,7 @@ class AutoSign:
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
         if self.host == '':
-            print("kong")
+            raise Exception('学校域名为空')
         # 第一次请求接口获取cookies（MOD_AUTH_CAS）
         url = self.host + self.apis[0]
         if url[0] != 'h':

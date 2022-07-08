@@ -33,7 +33,7 @@ config.yam中必填内容：
  - username: ''  `学号`
  - password: ''  `密码（登录学校教务的密码）`
  - address: ''  `地址（今日校园签到上面的地址信息）如下图蓝色箭头所指的黑框框`
- - lon:   `经度 （经纬度查询网址http://api.map.baidu.com/lbsapi/getpoint/index.html）`
+ - lon:   `经度` 经纬度查询网址:[http://api.map.baidu.com/lbsapi/getpoint/index.html](http://api.map.baidu.com/lbsapi/getpoint/index.html)
  - lat:   `纬度`
 ![地址](./img/loc.jpg)
 ### 🔑使用方法

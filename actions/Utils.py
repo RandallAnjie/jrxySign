@@ -359,8 +359,8 @@ class Utils:
     def getWise(username):
         # 判断文件是否存在
         if os.path.exists('./wise/' + username + '.wise'):
-            Utils.log('读取wise文件')
             with open('./wise/' + username + '.wise', 'rb') as f:
+                Utils.log('读取wise文件成功')
                 return pickle.load(f)
         else:
             Utils.log('未找到wise文件')
