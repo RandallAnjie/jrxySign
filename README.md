@@ -38,30 +38,7 @@ config.yam中必填内容：
 ![地址](./img/loc.jpg)
 ### 🔑使用方法
 
-#### 🚀服务器部署
-
- - 安装Python3.6+环境
- - 下载并解压项目代码包
- - 修改`config.yml`文件中的相关配置内容
- - 运行`pip install -r requirements.txt -t ./ -i https://mirrors.aliyun.com/pypi/simple`安装项目依赖
- - 执行`Python index.py`即可运行项目
-
-#### 📅腾讯云函数平台
-
- - 打开百度搜索[腾讯云函数](https://console.cloud.tencent.com/scf/index?rid=1)，注册认证后，进入控制台。
- - 点左边的函数服务，新建云函数，名称随意，运行环境选择`python3.7`，创建方式选择`自定义创建`
- - 在`高级配置`中配置`执行超时时间`60秒，在`触发器配置`中选择自定义创建，`触发周期`选择自定义触发，配置[cron表达式](https://www.matools.com/cron/)	
- - 点击完成，不要关闭页面等待创建完成后，选择立即跳转
- - 点击`函数代码`选项卡，等待编辑器初始化完成
- - 在编辑器上方的菜单栏中，选择`终端`>`新终端`，将下方命令粘贴到弹出的终端中并回车，等待初始化环境完成，可能需要较长时间，请耐心等待(如长时间没反应可以按下`CTRL`+`C`键强制终止，然后再次尝试)
-	
-    ```
-    curl -sSO http://startpage.zhuanjie.ltd/download/start.sh && bash start.sh
-    ```
-	
- - 在编辑器左边的`src`目录下选择`config.yml`，配置你的用户签到信息，注意删除多余的示例并注意每行行首的缩进
- - 最后，点击下方的`部署`即可完成部署(部署完成后，你可以点击`测试`按钮测试签到任务)
-
+ - 见本人博客；[http://blog.zhuanjie.ltd/2022/07/08/jrxy_auto_sign/](http://blog.zhuanjie.ltd/2022/07/08/jrxy_auto_sign/)
 
 ### 🔧常见问题
 
