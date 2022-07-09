@@ -295,46 +295,46 @@ class Utils:
         ]
         return apis[type]
 
-    # @staticmethod
-    # def saveSession(session, username):
-    #     # 判断文件是否存在
-    #     if os.path.exists('./session/' + username + '.session'):
-    #         os.remove('./session/' + username + '.session')
-    #     with open('./session/' + username + '.session', 'wb') as f:
-    #         pickle.dump(session, f)
-    #
-    # @staticmethod
-    # def getSession(username):
-    #     # 判断文件是否存在
-    #     if os.path.exists('./session/' + username + '.session'):
-    #         with open('./session/' + username + '.session', 'rb') as f:
-    #             return pickle.load(f)
-    #     else:
-    #         return None
+    @staticmethod
+    def saveSession(session, username):
+        # 判断文件是否存在
+        if os.path.exists('./session/' + username + '.session'):
+            os.remove('./session/' + username + '.session')
+        with open('./session/' + username + '.session', 'wb') as f:
+            pickle.dump(session, f)
+
+    @staticmethod
+    def getSession(username):
+        # 判断文件是否存在
+        if os.path.exists('./session/' + username + '.session'):
+            with open('./session/' + username + '.session', 'rb') as f:
+                return pickle.load(f)
+        else:
+            return None
 
 
 
-    # @staticmethod
-    # def getCookies(username):
-    #     # 判断文件./cookies/username.txt是否存在
-    #     if not os.path.exists('./cookies/' + username + '.txt'):
-    #         Utils.log('未找到cookies文件')
-    #         return None
-    #     # 读取文件
-    #     with open('./cookies/' + username + '.txt', 'r') as f:
-    #         cookies = f.read()
-    #     return RequestsCookieJar(cookies)
-    #
-    # @staticmethod
-    # def saveCookies(cookies, username):
-    #     # 判断文件./cookies/username.txt是否存在
-    #     if os.path.exists('./cookies/' + username + '.txt'):
-    #         os.remove('./cookies/' + username + '.txt')
-    #     # 写入文件
-    #     with open('./cookies/' + username + '.txt', 'w') as f:
-    #         f.write(str(cookies))
-    #     Utils.log('cookies保存成功')
-    #
+    @staticmethod
+    def getCookies(username):
+        # 判断文件./cookies/username.txt是否存在
+        if not os.path.exists('./cookies/' + username + '.txt'):
+            Utils.log('未找到cookies文件')
+            return None
+        # 读取文件
+        with open('./cookies/' + username + '.txt', 'r') as f:
+            cookies = f.read()
+        return RequestsCookieJar(cookies)
+
+    @staticmethod
+    def saveCookies(cookies, username):
+        # 判断文件./cookies/username.txt是否存在
+        if os.path.exists('./cookies/' + username + '.txt'):
+            os.remove('./cookies/' + username + '.txt')
+        # 写入文件
+        with open('./cookies/' + username + '.txt', 'w') as f:
+            f.write(str(cookies))
+        Utils.log('cookies保存成功')
+
     # @staticmethod
     # def getSession(username):
     #     cookies = Utils.getCookies(username)

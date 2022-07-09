@@ -25,49 +25,49 @@ class AutoSign:
         url = self.host + self.apis[0]
         if url[0] != 'h':
             url = 'https://' + url
-        # # 从文件读取session
-        # if Utils.getSession(self.userInfo['username']) is None:
-        #     # 第一次获取
-        #     Utils.log('第一次获取session')
-        #     self.session.post(url,
-        #                       headers=headers,
-        #                       data=json.dumps({}),
-        #                       verify=False)
-        #     # 保存session到文件
-        #     Utils.saveSession(self.session, self.userInfo['username'])
-        #     Utils.log('重新获取cookies成功')
-        # else:
-        #     Utils.log('从文件读取session')
-        #     self.session = Utils.getSession((self.userInfo['username']))
-        # try:
-        #     # 第二次请求接口，真正的拿到具体任务
-        #     res = self.session.post(url,
-        #                             headers=headers,
-        #                             data=json.dumps({}),
-        #                             verify=False).json()
-        # except Exception as e:
-        #     Utils.log('获取任务失败，重新获取session')
-        #     self.session.post(url,
-        #                       headers=headers,
-        #                       data=json.dumps({}),
-        #                       verify=False)
-        #     # 保存session到文件
-        #     Utils.saveSession(self.session, self.userInfo['username'])
-        #     Utils.log('重新获取cookies成功')
-        #     # 第二次请求接口，真正的拿到具体任务
-        #     res = self.session.post(url,
-        #                             headers=headers,
-        #                             data=json.dumps({}),
-        #                             verify=False).json()
-        self.session.post(url,
-                          headers=headers,
-                          data=json.dumps({}),
-                          verify=False)
-        # 第二次请求接口，真正的拿到具体任务
-        res = self.session.post(url,
-                                headers=headers,
-                                data=json.dumps({}),
-                                verify=False).json()
+        # 从文件读取session
+        if Utils.getSession(self.userInfo['username']) is None:
+            # 第一次获取
+            Utils.log('第一次获取session')
+            self.session.post(url,
+                              headers=headers,
+                              data=json.dumps({}),
+                              verify=False)
+            # 保存session到文件
+            Utils.saveSession(self.session, self.userInfo['username'])
+            Utils.log('获取cookies成功')
+        else:
+            Utils.log('从文件读取session')
+            self.session = Utils.getSession((self.userInfo['username']))
+        try:
+            # 第二次请求接口，真正的拿到具体任务
+            res = self.session.post(url,
+                                    headers=headers,
+                                    data=json.dumps({}),
+                                    verify=False).json()
+        except Exception as e:
+            Utils.log('获取任务失败，重新获取session')
+            self.session.post(url,
+                              headers=headers,
+                              data=json.dumps({}),
+                              verify=False)
+            # 保存session到文件
+            Utils.saveSession(self.session, self.userInfo['username'])
+            Utils.log('重新获取cookies成功')
+            # 第二次请求接口，真正的拿到具体任务
+            res = self.session.post(url,
+                                    headers=headers,
+                                    data=json.dumps({}),
+                                    verify=False).json()
+        # self.session.post(url,
+        #                   headers=headers,
+        #                   data=json.dumps({}),
+        #                   verify=False)
+        # # 第二次请求接口，真正的拿到具体任务
+        # res = self.session.post(url,
+        #                         headers=headers,
+        #                         data=json.dumps({}),
+        #                         verify=False).json()
         if len(res['datas']['unSignedTasks']) < 1:
             if len(res['datas']['leaveTasks']) < 1:
                 raise Exception('当前暂时没有未签到的任务哦！')

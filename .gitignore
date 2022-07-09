@@ -1,5 +1,6 @@
 __pycache__
 */__pycache__
-session
+session/1*
 *.yml
-*.txt
+signlog.txt
+config.yml

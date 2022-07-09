@@ -101,7 +101,11 @@ def working(user, httpProxy):
         if "没有未签到的任务" in str(e):
             Utils.log(str(e))
             return str(e)
+        elif "远程主机强迫关闭了一个现有的连接" in str(e):
+            Utils.log("学校服务器关闭了连接，请等待学校服务器重启")
+            return "学校服务器关闭了连接，请等待学校服务器重启！"
         else:
+            print(e)
             Utils.log('开始尝试登录账号')
             wise.login()
             # 将wise对象保存到本地
