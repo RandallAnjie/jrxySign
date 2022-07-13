@@ -41,7 +41,7 @@ config.yam中必填内容：
 ![地址](./img/loc.jpg)
 ### 🔑使用方法
 
- - 见本人博客：[http://blog.zhuanjie.ltd/2022/07/08/jrxy_auto_sign/](http://blog.zhuanjie.ltd/2022/07/08/jrxy_auto_sign/)
+ - 见本人博客：[http://blog.zhuanjie.ltd/index.php/2022/07/08/jrxy_auto_sign/](http://blog.zhuanjie.ltd/index.php/2022/07/08/jrxy_auto_sign/)
 
 ### 🔧常见问题
 
