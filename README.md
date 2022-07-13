@@ -14,7 +14,7 @@
  - 新增本地保存登录信息session的`wise`模块，免于签到一次登录一次（未测试）
 ### v1.9.2
  - 提高代码稳定性
- - 优化[文档](http://blog.zhuanjie.ltd/2022/07/08/jrxy_auto_sign/)
+ - 优化[文档](http://blog.zhuanjie.ltd/index.php/2022/07/08/jrxy_auto_sign/)
 
 ## 本项目参考
  - [ZimoLoveShuang/auto-submit](https://github.com/ZimoLoveShuang/auto-submit)
