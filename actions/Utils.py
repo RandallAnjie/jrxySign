@@ -1,15 +1,11 @@
 import base64
 import json
-import pickle
 import random
-
-import requests
 import rsa
 import sys
 import yaml
 from io import BytesIO
 from Crypto.Cipher import AES
-from requests.cookies import RequestsCookieJar
 from tencentcloud.common import credential
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 from tencentcloud.common.profile.client_profile import ClientProfile
@@ -44,8 +40,9 @@ class Utils:
         file = open(yaml_file, 'r', encoding="utf-8")
         file_data = file.read()
         file.close()
-        config = yaml.load(file_data, Loader=yaml.FullLoader)
-        return dict(config)
+        config = dict(yaml.load(file_data, Loader=yaml.FullLoader))
+        config['Version'] = '2.5.0'
+        return config
 
     # aes加密的实现
     @staticmethod
@@ -131,11 +128,10 @@ class Utils:
 
     @staticmethod
     def log(content):
-        print(Utils.getTimeStr() + " V%s %s" %
-              (Utils.getYmlConfig()['Version'], content))
+        msg = Utils.getTimeStr() + " V%s %s" %(Utils.getYmlConfig()['Version'], content)
+        print(msg)
         with open('signlog.txt', 'a', encoding='utf-8') as fin:
-            fin.write(Utils.getTimeStr() + " V%s %s" %
-                      (Utils.getYmlConfig()['Version'], content) + "\n")
+            fin.write(msg + "\n")
         sys.stdout.flush()
 
     @staticmethod
@@ -153,43 +149,31 @@ class Utils:
                                data=json.dumps({'fileType': 1}),
                                verify=False)
         datas = res.json().get('datas')
-        fileName = datas.get('fileName')
+        fileName = datas.get('fileName')+".jpg"
         policy = datas.get('policy')
         accessKeyId = datas.get('accessid')
         signature = datas.get('signature')
         policyHost = datas.get('host')
         headers = {
             'User-Agent':
-                'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0'
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0'
         }
         multipart_encoder = MultipartEncoder(
             fields={  # 这里根据需要进行参数格式设置
-                'key':
-                    fileName,
-                'policy':
-                    policy,
-                'OSSAccessKeyId':
-                    accessKeyId,
-                'success_action_status':
-                    '200',
-                'signature':
-                    signature,
-                'file': ('blob',
-                         open(
-                             os.path.join(os.path.dirname(__file__), '../',
-                                          picSrc), 'rb'), 'image/jpg')
+                'key': fileName, 'policy': policy, 'AccessKeyId': accessKeyId, 'signature': signature, 'x-obs-acl': 'public-read',
+                'file': ('blob', open(os.path.join(os.path.dirname(__file__), '../', picSrc), 'rb'), 'image/jpg')
             })
         headers['Content-Type'] = multipart_encoder.content_type
         env.session.post(url=policyHost,
                          headers=headers,
                          data=multipart_encoder)
-        env.fileName = fileName
+        return fileName
 
     # 获取图片上传位置
     @staticmethod
-    def getPictureUrl(env, api):
+    def getPictureUrl(env, api, fileName):
         url = env.host + api
-        params = {'ossKey': env.fileName}
+        params = {'ossKey': fileName}
         res = env.session.post(url=url,
                                headers={'content-type': 'application/json'},
                                data=json.dumps(params),
@@ -231,7 +215,7 @@ class Utils:
         }
         headers = {
             'User-Agent':
-                'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4 cpdaily/9.0.14 wisedu/9.0.14',
+            'Mozilla/5.0 (Linux; Android 8.0.0; MI 6 Build/OPR1.170623.027; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/92.0.4515.131 Mobile Safari/537.36 okhttp/3.12.4 cpdaily/9.0.14 wisedu/9.0.14',
             'CpdailyStandAlone': '0',
             'extension': '1',
             'Cpdaily-Extension': Utils.DESEncrypt(json.dumps(extension)),
@@ -244,12 +228,12 @@ class Utils:
         bodyString = Utils.encryptAES(
             json.dumps(env.submitData), 'SASEoK4Pa5d4SssO')
         env.submitData['bodyString'] = bodyString
-        Utils.log('加密表单数据完成')
+        # print(env.submitData)
         formData = {
             'version':
-                'first_v3',
+            'first_v3',
             'calVersion':
-                'firstv',
+            'firstv',
             'bodyString': bodyString,
             'sign': Utils.md5(urllib.parse.urlencode(env.submitData) + "&SASEoK4Pa5d4SssO")
         }
@@ -268,21 +252,21 @@ class Utils:
                 'wec-counselor-collector-apps/stu/collector/detailCollector',
                 'wec-counselor-collector-apps/stu/collector/getFormFields',
                 'wec-counselor-collector-apps/stu/collector/submitForm',
-                'wec-counselor-collector-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-collector-apps/stu/obs/getUploadPolicy',
                 'wec-counselor-collector-apps/stu/collector/previewAttachment'
             ],
             [
                 'wec-counselor-sign-apps/stu/sign/getStuSignInfosInOneDay',
                 'wec-counselor-sign-apps/stu/sign/detailSignInstance',
                 'wec-counselor-sign-apps/stu/sign/submitSign',
-                'wec-counselor-sign-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-sign-apps/stu/obs/getUploadPolicy',
                 'wec-counselor-sign-apps/stu/sign/previewAttachment'
             ],
             [
                 'wec-counselor-attendance-apps/student/attendance/getStuAttendacesInOneDay',
                 'wec-counselor-attendance-apps/student/attendance/detailSignInstance',
                 'wec-counselor-attendance-apps/student/attendance/submitSign',
-                'wec-counselor-sign-apps/stu/oss/getUploadPolicy',
+                'wec-counselor-sign-apps/stu/obs/getUploadPolicy',
                 'wec-counselor-sign-apps/stu/sign/previewAttachment'
             ],
             [
@@ -294,74 +278,3 @@ class Utils:
             ]
         ]
         return apis[type]
-
-    @staticmethod
-    def saveSession(session, username):
-        # 判断文件是否存在
-        if os.path.exists('./session/' + username + '.session'):
-            os.remove('./session/' + username + '.session')
-        with open('./session/' + username + '.session', 'wb') as f:
-            pickle.dump(session, f)
-
-    @staticmethod
-    def getSession(username):
-        # 判断文件是否存在
-        if os.path.exists('./session/' + username + '.session'):
-            with open('./session/' + username + '.session', 'rb') as f:
-                return pickle.load(f)
-        else:
-            return None
-
-
-
-    @staticmethod
-    def getCookies(username):
-        # 判断文件./cookies/username.txt是否存在
-        if not os.path.exists('./cookies/' + username + '.txt'):
-            Utils.log('未找到cookies文件')
-            return None
-        # 读取文件
-        with open('./cookies/' + username + '.txt', 'r') as f:
-            cookies = f.read()
-        return RequestsCookieJar(cookies)
-
-    @staticmethod
-    def saveCookies(cookies, username):
-        # 判断文件./cookies/username.txt是否存在
-        if os.path.exists('./cookies/' + username + '.txt'):
-            os.remove('./cookies/' + username + '.txt')
-        # 写入文件
-        with open('./cookies/' + username + '.txt', 'w') as f:
-            f.write(str(cookies))
-        Utils.log('cookies保存成功')
-
-    # @staticmethod
-    # def getSession(username):
-    #     cookies = Utils.getCookies(username)
-    #     if cookies is None:
-    #         Utils.log('未找到cookies文件')
-    #         return None
-    #     session = requests.Session()
-    #     session.cookies = cookies
-    #     return session
-
-    # @staticmethod
-    # def saveSession(username):
-    @staticmethod
-    def saveWise(wise, username):
-        # 判断文件是否存在
-        if os.path.exists('./wise/' + username + '.wise'):
-            os.remove('./wise/' + username + '.wise')
-        with open('./wise/' + username + '.wise', 'wb') as f:
-            pickle.dump(wise, f)
-
-    @staticmethod
-    def getWise(username):
-        # 判断文件是否存在
-        if os.path.exists('./wise/' + username + '.wise'):
-            with open('./wise/' + username + '.wise', 'rb') as f:
-                Utils.log('读取wise文件成功')
-                return pickle.load(f)
-        else:
-            Utils.log('未找到wise文件')
-            return None

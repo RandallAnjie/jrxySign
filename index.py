@@ -1,158 +1,111 @@
-import os
-
-from tencentcloud.common.profile.http_profile import HttpProfile
+import datetime
 from actions.wiseLoginService import wiseLoginService
 from actions.autoSign import AutoSign
 from actions.collection import Collection
 from actions.workLog import workLog
 from actions.pushKit import pushKit
-from actions.Utils import Utils
+from actions.utils import Utils
 from time import sleep
+import traceback
 
 
-def start():
+def main():
     Utils.log("自动化任务开始执行")
     config = Utils.getYmlConfig()
     push = pushKit(config['notifyOption'])
     httpProxy = config['httpProxy'] if 'httpProxy' in config else ''
     for user in config['users']:
-        Utils.log(
-            f"开始执行用户{user['user']['username'] if user['user']['username'] else '默认用户'}的任务"
-        )
-        if config['debug']:
-            Utils.log("Debug模式")
+        Utils.log(f"开始执行用户{user['user'].get('username','默认用户')}的任务")
+
+        # 执行任务
+        try:
             msg = working(user, httpProxy)
-        else:
-            try:
-                msg = working(user, httpProxy)
-                ret = True
-            except Exception as e:
-                msg = str(e)
-                ret = False
-            ntm = Utils.getTimeStr()
-            if ret:
-                # 此处需要注意就算提示成功也不一定是真的成功，以实际为准
-                Utils.log(msg)
-                if 'SUCCESS' in msg:
-                    msg = push.sendMsg(
-                        '今日校园签到成功通知',
-                        '服务器(V%s)于%s尝试签到成功!' % (config['Version'], ntm),
-                        user['user'])
-                else:
-                    msg = push.sendMsg(
-                        '今日校园签到异常通知', '服务器(V%s)于%s尝试签到异常!\n异常信息:%s' %
-                                      (config['Version'], ntm, msg), user['user'])
-            else:
-                Utils.log("Error:" + msg)
-                msg = push.sendMsg(
-                    '今日校园签到失败通知', '服务器(V%s)于%s尝试签到失败!\n错误信息:%s' %
-                                  (config['Version'], ntm, msg), user['user'])
+            ret = True
+        except Exception as e:
+            msg = f'[{e}]\n{traceback.format_exc()}'
+            ret = False
+
+        # 根据任务执行情况(ret和msg)进行推送和记录
+        ntm = Utils.getTimeStr()
+        if ret == True:
+            # 此处需要注意就算提示成功也不一定是真的成功，以实际为准
             Utils.log(msg)
+            if 'SUCCESS' in msg:
+                msg = push.sendMsg(
+                    '今日校园签到成功通知',
+                    f"服务器(V%s)于%s为用户{user['user']['username']}尝试签到成功!\n输出信息:%s" % (config['Version'], ntm, msg),
+                    user['user'])
+            else:
+                msg = push.sendMsg(
+                    '今日校园签到异常通知', f"服务器(V%s)于%s为用户{user['user']['username']}尝试签到失败!\n错误信息:%s" %
+                    (config['Version'], ntm, msg), user['user'])
+        else:
+            Utils.log("Error:" + msg)
+            msg = push.sendMsg(
+                '今日校园签到失败通知', f"服务器(V%s)于%s为用户{user['user']['username']}尝试签到失败!\n错误信息:%s" %
+                (config['Version'], ntm, msg), user['user'])
+        Utils.log(msg)
     Utils.log("自动化任务执行完毕")
 
 
 def working(user, httpProxy):
+    Utils.log('正在获取登录地址')
     wise = wiseLoginService(user['user'], httpProxy)
-    # 判断wise文件是否存在
-    if not os.path.exists('./wise/' + user['user']['username'] + '.wise'):
-        Utils.log('开始尝试登录账号')
-        wise.login()
-        # 将wise对象保存到本地
-        Utils.saveWise(wise, user['user']['username'])
-    else:
-        wise = Utils.getWise(user['user']['username'])
+    Utils.log('开始尝试登录账号')
+    wise.login()
     sleep(1)
     # 登陆成功，通过type判断当前属于 信息收集、签到、查寝
     # 信息收集
-    # print(user)
-    try:
-        if user['user']['type'] == 0:
-            # 以下代码是信息收集的代码
-            Utils.log('开始执行收集任务')
-            collection = Collection(wise, user['user'])
-            collection.queryForm()
-            collection.fillForm()
-            sleep(1)
-            msg = collection.submitForm()
-            return msg
-        elif user['user']['type'] in [1, 2, 3]:
-            # 以下代码是签到的代码
-            Utils.log('开始执行签到任务')
-            sign = AutoSign(wise, user['user'])
-            sign.getUnSignTask()
-            sleep(1)
-            sign.getDetailTask()
-            sign.fillForm()
-            sleep(1)
-            msg = sign.submitForm()
-            return msg
-        elif user['user']['type'] == 4:
-            # 以下代码是工作日志的代码
-            Utils.log('开始执行日志任务')
-            work = workLog(wise, user['user'])
-            work.checkHasLog()
-            sleep(1)
-            work.getFormsByWids()
-            work.fillForms()
-            sleep(1)
-            msg = work.submitForms()
-            return msg
-    except Exception as e:
-        if "没有未签到的任务" in str(e):
-            Utils.log(str(e))
-            return str(e)
-        elif "远程主机强迫关闭了一个现有的连接" in str(e):
-            Utils.log("学校服务器关闭了连接，请等待学校服务器重启")
-            return "学校服务器关闭了连接，请等待学校服务器重启！"
-        else:
-            print(e)
-            Utils.log('开始尝试登录账号')
-            wise.login()
-            # 将wise对象保存到本地
-            Utils.saveWise(wise, user['user']['username'])
-            if user['user']['type'] == 0:
-                # 以下代码是信息收集的代码
-                Utils.log('开始执行收集任务')
-                collection = Collection(wise, user['user'])
-                collection.queryForm()
-                collection.fillForm()
-                sleep(1)
-                msg = collection.submitForm()
-                return msg
-            elif user['user']['type'] in [1, 2, 3]:
-                # 以下代码是签到的代码
-                Utils.log('开始执行签到任务')
-                sign = AutoSign(wise, user['user'])
-                sign.getUnSignTask()
-                sleep(1)
-                sign.getDetailTask()
-                sign.fillForm()
-                sleep(1)
-                msg = sign.submitForm()
-                return msg
-            elif user['user']['type'] == 4:
-                # 以下代码是工作日志的代码
-                Utils.log('开始执行日志任务')
-                work = workLog(wise, user['user'])
-                work.checkHasLog()
-                sleep(1)
-                work.getFormsByWids()
-                work.fillForms()
-                sleep(1)
-                msg = work.submitForms()
-                return msg
+    if user['user']['type'] == 0:
+        # 以下代码是信息收集的代码
+        Utils.log('开始执行收集任务')
+        collection = Collection(wise, user['user'])
+        collection.queryForm()
+        collection.fillForm()
+        sleep(1)
+        msg = collection.submitForm()
+        return msg
+    elif user['user']['type'] in [1, 2, 3]:
+        # 以下代码是签到的代码
+        Utils.log('开始执行签到任务')
+        sign = AutoSign(wise, user['user'])
+        sign.getUnSignTask()
+        sleep(1)
+        sign.getDetailTask()
+        sign.fillForm()
+        sleep(1)
+        msg = sign.submitForm()
+        return msg
+    elif user['user']['type'] == 4:
+        # 以下代码是工作日志的代码
+        Utils.log('开始执行日志任务')
+        work = workLog(wise, user['user'])
+        work.checkHasLog()
+        sleep(1)
+        work.getFormsByWids()
+        work.fillForms()
+        sleep(1)
+        msg = work.submitForms()
+        return msg
 
 
 # 阿里云的入口函数
 def handler(event, context):
-    start()
+    main()
 
 
 # 腾讯云的入口函数
 def main_handler(event, context):
-    start()
+    main()
     return 'Finished'
 
+def start():
+    main()
 
 if __name__ == '__main__':
-    start()
+    while True:
+        if (datetime.datetime.now().hour == 16 and datetime.datetime.now().minute == 1 and datetime.datetime.now().second == 2) or (datetime.datetime.now().hour == 16 and datetime.datetime.now().minute == 1 and datetime.datetime.now().second == 1):
+            main()
+        else:
+            print(f"循环中--{datetime.datetime.now()}")
+        sleep(1)

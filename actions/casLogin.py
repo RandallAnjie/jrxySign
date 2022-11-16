@@ -3,7 +3,7 @@ import requests
 import urllib.parse
 from bs4 import BeautifulSoup
 from urllib3.exceptions import InsecureRequestWarning
-from actions.Utils import Utils
+from actions.utils import Utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -35,16 +35,15 @@ class casLogin:
             return flag['isNeed']
 
     def login(self):
-
         html = self.session.get(self.login_url, verify=False).text
-        soup = BeautifulSoup(html, 'lxml')
+        soup = BeautifulSoup(html, 'html.parser')
         if len(soup.select('#casLoginForm')) > 0:
             self.type = 0
         elif len(soup.select('#loginFromId')) > 0:
-            soup = BeautifulSoup(str(soup.select('#loginFromId')[1]), 'lxml')
+            soup = BeautifulSoup(str(soup.select('#loginFromId')[1]), 'html.parser')
             self.type = 1
         elif len(soup.select('#fm1')) > 0:
-            soup = BeautifulSoup(str(soup.select('#fm1')[0]), 'lxml')
+            soup = BeautifulSoup(str(soup.select('#fm1')[0]), 'html.parser')
             self.type = 2
         else:
             raise Exception('出错啦！网页中没有找到LoginForm')
@@ -111,7 +110,7 @@ class casLogin:
             return self.session.cookies
         elif data.status_code == 200 or data.status_code == 401:
             data = data.text
-            soup = BeautifulSoup(data, 'lxml')
+            soup = BeautifulSoup(data, 'html.parser')
             if len(soup.select('#errorMsg')) > 0:
                 msg = soup.select('#errorMsg')[0].get_text()
             elif len(soup.select('#formErrorTip2')) > 0:

@@ -1,11 +1,12 @@
 import json
-from actions.Utils import Utils
+import datetime
+from actions.utils import Utils
 from actions.wiseLoginService import wiseLoginService
 
 
 class AutoSign:
     # 初始化签到类
-    def __init__(self, wiseLoginService, userInfo):
+    def __init__(self, wiseLoginService: wiseLoginService, userInfo):
         self.session = wiseLoginService.session
         self.host = wiseLoginService.campus_host
         self.userInfo = userInfo
@@ -19,61 +20,28 @@ class AutoSign:
     def getUnSignTask(self):
         headers = self.session.headers
         headers['Content-Type'] = 'application/json'
-        if self.host == '':
-            raise Exception('学校域名为空')
         # 第一次请求接口获取cookies（MOD_AUTH_CAS）
         url = self.host + self.apis[0]
-        if url[0] != 'h':
-            url = 'https://' + url
-        # 从文件读取session
-        if Utils.getSession(self.userInfo['username']) is None:
-            # 第一次获取
-            Utils.log('第一次获取session')
-            self.session.post(url,
-                              headers=headers,
-                              data=json.dumps({}),
-                              verify=False)
-            # 保存session到文件
-            Utils.saveSession(self.session, self.userInfo['username'])
-            Utils.log('获取cookies成功')
-        else:
-            Utils.log('从文件读取session')
-            self.session = Utils.getSession((self.userInfo['username']))
-        try:
-            # 第二次请求接口，真正的拿到具体任务
-            res = self.session.post(url,
-                                    headers=headers,
-                                    data=json.dumps({}),
-                                    verify=False).json()
-        except Exception as e:
-            Utils.log('获取任务失败，重新获取session')
-            self.session.post(url,
-                              headers=headers,
-                              data=json.dumps({}),
-                              verify=False)
-            # 保存session到文件
-            Utils.saveSession(self.session, self.userInfo['username'])
-            Utils.log('重新获取cookies成功')
-            # 第二次请求接口，真正的拿到具体任务
-            res = self.session.post(url,
-                                    headers=headers,
-                                    data=json.dumps({}),
-                                    verify=False).json()
-        # self.session.post(url,
-        #                   headers=headers,
-        #                   data=json.dumps({}),
-        #                   verify=False)
-        # # 第二次请求接口，真正的拿到具体任务
-        # res = self.session.post(url,
-        #                         headers=headers,
-        #                         data=json.dumps({}),
-        #                         verify=False).json()
+        self.session.post(url,
+                          headers=headers,
+                          data=json.dumps({}),
+                          verify=False)
+        # 第二次请求接口，真正的拿到具体任务
+        res = self.session.post(url,
+                                headers=headers,
+                                data=json.dumps({}),
+                                verify=False).json()
         if len(res['datas']['unSignedTasks']) < 1:
             if len(res['datas']['leaveTasks']) < 1:
                 raise Exception('当前暂时没有未签到的任务哦！')
-            latestTask = res['datas']['leaveTasks'][0]
+            latestTasks = res['datas']['leaveTasks']
         else:
-            latestTask = res['datas']['unSignedTasks'][0]
+            latestTasks = res['datas']['unSignedTasks']
+        latestTask = latestTasks[0]
+        if "formTitle" in self.userInfo:
+            for formItem in latestTasks:
+                if (formItem['taskName']).find(self.userInfo["formTitle"]) > -1:
+                    latestTask = formItem
         self.taskInfo = {
             'signInstanceWid': latestTask['signInstanceWid'],
             'signWid': latestTask['signWid']
@@ -94,8 +62,10 @@ class AutoSign:
     def fillForm(self):
         # 判断签到是否需要照片
         if self.task['isPhoto'] == 1:
-            Utils.uploadPicture(self, self.apis[3], self.userInfo['photo'])
-            self.form['signPhotoUrl'] = Utils.getPictureUrl(self, self.apis[4])
+            fileName = Utils.uploadPicture(
+                self, self.apis[3], self.userInfo['photo'])
+            self.form['signPhotoUrl'] = Utils.getPictureUrl(
+                self, self.apis[4], fileName)
         else:
             self.form['signPhotoUrl'] = ''
         if 'isNeedExtra' in self.task:
@@ -106,7 +76,6 @@ class AutoSign:
             extraFields = self.task['extraField']
             userItems = self.userInfo['forms']
             extraFieldItemValues = []
-            # print(extraFields)
             for i in range(len(extraFields)):
                 userItem = userItems[i]['form']
                 extraField = extraFields[i]
@@ -121,16 +90,16 @@ class AutoSign:
                 for extraFieldItem in extraFieldItems:
                     if extraFieldItem['isSelected']:
                         data = extraFieldItem['content']
+                    # print(extraFieldItem)
                     if extraFieldItem['content'] == userItem['value']:
                         if extraFieldItem['isOtherItems'] == 1:
-                            if 'value' in userItem:
+                            if 'extra' in userItem:
                                 flag = True
-                                if 'extra' in userItem:
-                                    inner = userItem['extra']
-                                else:
-                                    inner = userItem['value']
+                                extrastring = userItem['extra']
+                                if (userItem['extra']=='$Data'):
+                                    extrastring = f'{datetime.datetime.now().year}年{datetime.datetime.now().month}月{datetime.datetime.now().day-1}日'
                                 extraFieldItemValue = {
-                                    'extraFieldItemValue': inner,
+                                    'extraFieldItemValue': extrastring,
                                     'extraFieldItemWid': extraFieldItem['wid']
                                 }
                                 extraFieldItemValues.append(

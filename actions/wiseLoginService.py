@@ -3,7 +3,7 @@ import requests
 from urllib3.exceptions import InsecureRequestWarning
 from actions.casLogin import casLogin
 from actions.iapLogin import iapLogin
-from actions.Utils import Utils
+from actions.utils import Utils
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -16,8 +16,6 @@ class wiseLoginService:
                     'password'] or None == userInfo[
                         'schoolName'] or '' == userInfo['schoolName']:
             raise Exception('初始化类失败，请键入完整的参数（用户名，密码，学校名称）')
-        self.userInfo = userInfo
-        self.httpProxy = httpProxy
         self.username = userInfo['username']
         self.password = userInfo['password']
         self.schoolName = userInfo['schoolName']
@@ -65,7 +63,6 @@ class wiseLoginService:
                     clientUrl = ampUrl2
                 else:
                     raise Exception('未找到客户端登录地址')
-                print(clientUrl)
                 res = self.session.get(clientUrl, verify=False)
                 self.campus_host = re.findall('\w{4,5}\:\/\/.*?\/',
                                               clientUrl)[0]
@@ -73,7 +70,7 @@ class wiseLoginService:
                 self.login_host = re.findall('\w{4,5}\:\/\/.*?\/', res.url)[0]
                 self.login_type = joinType
                 break
-        if not flag:
+        if flag == False:
             raise Exception(self.schoolName + '不存在或未加入今日校园')
 
     # 通过登陆url判断采用哪种登陆方式
@@ -91,9 +88,6 @@ class wiseLoginService:
 
     # 本地化登陆
     def login(self):
-        # load = loadLogin(self.userInfo, self.httpProxy)
         # 获取学校登陆地址
         self.getLoginUrlBySchoolName()
         self.checkLogin()
-
-

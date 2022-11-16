@@ -2,40 +2,16 @@
 # 本项目的源代码在MPL2.0协议下发布，同时附加以下条目：                            #
 # 非商业性使用 — 不得将此项目及其衍生的项目的源代码和二进制产品用于任何商业和盈利用途#
 ###############################################################################
-Version: 1.9.2
-# 调试模式，用于寻找错误出现的坐标，默认为false
-# 特别提示：调试完成后请记得将debug改为false
-# 特别提示：调试完成后请记得将debug改为false
-# 特别提示：调试完成后请记得将debug改为false
-debug: False
-# 消息推送配置，method 0 为禁用 1 为webApi模式 2 为本地smtp模式 3 为qmsg模式(qq号模式)
-# 消息推送配置，method 4 为qmsg模式(qq群模式) method 5 为企业微信模式 method 6 为Server酱模式
+# 消息推送配置，method 0 为禁用 1 为webApi模式 2 为APPRISE模式(该模式支持邮箱、钉钉、ServerChan等推送渠道)，
 notifyOption:
-    method: 0
-    #############配置1-4选填一个即可
+    method: 3
     #############1 webApi配置,根据不同api可能需要自行修改推送模块
     mailApiUrl: ''
-    #############2 发信方邮箱账号密码,smtp服务器qq邮箱为smtp.qq.com,163邮箱为smtp.163.com
-    smtpOption:
-        userName: ''
-        passWord: ''
-        server: ''
-    #############3 完善qmsgKey即可,需要完善-user字段中qId参数，详见下方例子
-    qmsgOption:
-        key: ''
-        baseUrl: ''
-    #############4 企业微信配置
-    qywxOption:
-        corpid: ''
-        corpsecret: ''
-        agentid: ''
-    #############5 Server酱的Key请在下方rcvAcc处填写
-    serverChanOption:
-        baseUrl: ''
+    qqUrl: ''
 # 默认不填，如需使用先开通腾讯云OCR服务，再申请API密钥
 ocrOption:
-    SecretId: ''
-    SecretKey: ''
+    SecretId: 'APIid'
+    SecretKey: 'APIkey'
 # 如IP被拦截，可设置全局HTTP代理
 httpProxy: ''
 #用户组配置
@@ -45,7 +21,7 @@ httpProxy: ''
 users:
     # 第一个用户配置
     # 以下配置为工作日志
-    - user:
+    - user: # 转接
         # 任务类型（收集：0、签到：1、查寝：2、政工签到：3、教师工作日志：4）
         type: 1
         # school 学校全称
@@ -57,81 +33,33 @@ users:
         # 地址信息
         address: ''
         # 表单包含字段
-        intitle: '2022年暑假期间'
+        formTitle: ''
         notifyOption: 
             # method和顶部参数一致，不填默认按照顶部参数执行
             # method: 0
-            # rcvAcc为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
-            rcvAcc: ''
+            # rcvOption为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
+            rcvOption: ''
         # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
-        # lon 经度,
-        lon: 117.935356
+        # abnormalReason 反馈信息（这个一般不用配置，但是不能删除，删除会报错）
+        abnormalReason: ''
+        # lon 经度
+        lon: 116.318810
         # lat 纬度
-        lat: 32.619114
+        lat: 39.764792
         # 是否检查表单的标题（1代表检查，0代表不检查）
         checkTitle: 1
         # 表单信息
         forms:
             - form:
                 title: 你今天早晨的健康状况是：
-                value: 其它
-                extra: 36.5℃
+                value: 体温低于37.3
             - form:
                 title: 你今天中午的健康状况是：
-                value: 其它
-                extra: 36.5℃
+                value: 体温低于37.3
             - form:
                 title: 你今天晚间的健康状况是：
+                value: 体温低于37.3
+            - form:
+                title: 你最近一次做核酸检测的日期是：
                 value: 其它
-                extra: 36.5℃
-            - form:
-                title: 你与共同生活人员是否存在咳嗽，腹泻，发热，乏力，咽痛等症状以及本人是否处于居家观察等隔离管控状态：
-                value: 否
-            - form:
-                title: 你所在区域是否有疑似确诊病例以及中高分险地区，或者受疫情管制健康宝异常等情况：
-                value: 否
-    - user:
-        # 任务类型（收集：0、签到：1、查寝：2、政工签到：3、教师工作日志：4）
-        type: 1
-        # school 学校全称
-        schoolName: 北京印刷学院
-        # username 学号或者工号
-        username: ''
-        # password 密码
-        password: ''
-        # 地址信息
-        address: ''
-        # 表单包含字段
-        intitle: '2022年暑假期间'
-        notifyOption:
-            # method和顶部参数一致，不填默认按照顶部参数执行
-            # method: 0
-            # rcvAcc为接受消息的账号，可以为Email账号、QQ号、或者是企业微信ID(@all为全体)
-            rcvAcc: ''
-        # 附上经纬度查询地址（请自行选择自己的学校地址，address，lon，lat都要填查询到的）：http://api.map.baidu.com/lbsapi/getpoint/index.html
-        # lon 经度,
-        lon: 115.299652
-        # lat 纬度
-        lat: 33.551861
-        # 是否检查表单的标题（1代表检查，0代表不检查）
-        checkTitle: 1
-        # 表单信息
-        forms:
-            - form:
-                title: 你今天早晨的健康状况是：
-                value: 其它
-                extra: 36.5℃
-            - form:
-                title: 你今天中午的健康状况是：
-                value: 其它
-                extra: 36.5℃
-            - form:
-                title: 你今天晚间的健康状况是：
-                value: 其它
-                extra: 36.5℃
-            - form:
-                title: 你与共同生活人员是否存在咳嗽，腹泻，发热，乏力，咽痛等症状以及本人是否处于居家观察等隔离管控状态：
-                value: 否
-            - form:
-                title: 你所在区域是否有疑似确诊病例以及中高分险地区，或者受疫情管制健康宝异常等情况：
-                value: 否
+                extra: $Data
